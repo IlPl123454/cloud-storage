@@ -1,8 +1,18 @@
 services:
 
   db:
-    image: postgres
+    image: postgres:17
+    ports:
+      - "5433:5432"
     restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: cloudstorage
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  postgres_data:
+
 

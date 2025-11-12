@@ -1,4 +1,4 @@
-package com.plenkov.cloudstorage.dto.register;
+package com.plenkov.cloudstorage.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterRequestDto {
+public class UserRegisterResponseDto {
     private String username;
-    private String password;
 }

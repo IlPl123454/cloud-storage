@@ -1,41 +1,41 @@
 package com.plenkov.cloudstorage.controller;
 
-import com.plenkov.cloudstorage.dto.register.UserRegisterRequestDto;
-import com.plenkov.cloudstorage.repository.UserRepository;
-import com.plenkov.cloudstorage.service.RegisterService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.plenkov.cloudstorage.dto.auth.UserRegisterRequestDto;
+import com.plenkov.cloudstorage.dto.auth.UserRegisterResponseDto;
+import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
+import com.plenkov.cloudstorage.dto.auth.UserSignInResponseDto;
+import com.plenkov.cloudstorage.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/auth")
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    private final RegisterService registerService;
+    private final AuthService authService;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthController(RegisterService registerService) {
-        this.registerService = registerService;
+    @PostMapping("/sign-up")
+    public UserRegisterResponseDto doRegister(@Valid @RequestBody UserRegisterRequestDto dto) {
+        return authService.register(dto);
     }
 
+    @PostMapping("/sign-in")
+    public UserSignInResponseDto doSignIn(@Valid @RequestBody UserSignInRequestDto dto, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
 
-    @GetMapping("/login")
-    public String login() {
-        return "redirect:/login.html";
-    }
+        Authentication auth = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
-    @GetMapping("/register")
-    public String getRegister() {
-        return "redirect:/register.html";
-    }
+        request.getSession(true);
 
-    @PostMapping("/register")
-    public String doRegister(@RequestParam String username, @RequestParam String password) {
-        UserRegisterRequestDto user = new UserRegisterRequestDto(username, password);
-
-        registerService.register(user);
-        System.out.println(username + " зарегистрирован");
-
-        return "redirect:/hello.html";
+        return authService.authenticate(dto);
     }
 }

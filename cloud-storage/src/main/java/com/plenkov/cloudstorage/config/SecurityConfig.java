@@ -1,7 +1,10 @@
 package com.plenkov.cloudstorage.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
@@ -19,20 +23,31 @@ public class SecurityConfig {
         http.
                 csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.
-                        requestMatchers("/auth/register", "/auth/login", "/login.html", "/register.html").permitAll()
-                        .anyRequest().authenticated()
+                        requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/assets/**",
+                                "/login.html",
+                                "favicon.ico",
+                                "/config.js"
+                        ).permitAll()
+                        .requestMatchers(
+                                "api/user/me",
+                                "api/auth/sign-up",
+                                "api/auth/sign-in"
+                        ).permitAll()
+                        .requestMatchers("/**").authenticated()
                 )
-                .formLogin(form -> form.
-                        loginPage("/login.html")
-                        .loginProcessingUrl("/perform_login")
-                        .permitAll()
-                );
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable())
+                .logout(logout -> logout.logoutSuccessUrl("/auth/sign-out"));
 
         return http.build();
     }
 
-    public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
     @Bean

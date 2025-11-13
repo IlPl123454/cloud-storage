@@ -19,4 +19,3 @@ public class UserController {
         log.warn("Пользователь авторизирован");
     }
 }
-

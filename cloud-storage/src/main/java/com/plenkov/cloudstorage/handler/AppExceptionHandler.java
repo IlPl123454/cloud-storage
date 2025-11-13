@@ -1,6 +1,7 @@
 package com.plenkov.cloudstorage.handler;
 
 import com.plenkov.cloudstorage.dto.ErrorDto;
+import com.plenkov.cloudstorage.exception.AuthException;
 import com.plenkov.cloudstorage.exception.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,12 @@ public class AppExceptionHandler {
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public ErrorDto handleUserAlreadyExistException(UserAlreadyExistException e) {
+        log.error(e.getMessage());
+        return new ErrorDto(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ErrorDto handleAuthException(AuthException e) {
         log.error(e.getMessage());
         return new ErrorDto(e.getMessage());
     }

@@ -6,20 +6,19 @@ import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
 import com.plenkov.cloudstorage.dto.auth.UserSignInResponseDto;
 import com.plenkov.cloudstorage.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/sign-up")
     public UserRegisterResponseDto doRegister(@Valid @RequestBody UserRegisterRequestDto dto) {
@@ -27,15 +26,10 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public UserSignInResponseDto doSignIn(@Valid @RequestBody UserSignInRequestDto dto, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
+    public UserSignInResponseDto doSignIn(@Valid @RequestBody UserSignInRequestDto dto,
+                                          HttpServletRequest request,
+                                          HttpServletResponse response) {
 
-        Authentication auth = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        request.getSession(true);
-
-        return authService.authenticate(dto);
+        return authService.authenticate(dto, request, response);
     }
 }

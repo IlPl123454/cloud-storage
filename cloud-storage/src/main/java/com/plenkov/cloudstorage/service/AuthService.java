@@ -3,7 +3,7 @@ package com.plenkov.cloudstorage.service;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterRequestDto;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterResponseDto;
 import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
-import com.plenkov.cloudstorage.dto.auth.UserSignInResponseDto;
+import com.plenkov.cloudstorage.dto.auth.UserDto;
 import com.plenkov.cloudstorage.exception.AuthException;
 import com.plenkov.cloudstorage.exception.UserAlreadyExistException;
 import com.plenkov.cloudstorage.model.User;
@@ -51,9 +51,9 @@ public class AuthService {
         return new UserRegisterResponseDto(user.getLogin());
     }
 
-    public UserSignInResponseDto authenticate(UserSignInRequestDto dto,
-                                              HttpServletRequest request,
-                                              HttpServletResponse response) {
+    public UserDto authenticate(UserSignInRequestDto dto,
+                                HttpServletRequest request,
+                                HttpServletResponse response) {
 
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(
@@ -79,6 +79,8 @@ public class AuthService {
         SecurityContextRepository repo = new HttpSessionSecurityContextRepository();
         repo.saveContext(context, request, response);
 
-        return new UserSignInResponseDto(dto.username());
+//        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return new UserDto(dto.username());
     }
 }

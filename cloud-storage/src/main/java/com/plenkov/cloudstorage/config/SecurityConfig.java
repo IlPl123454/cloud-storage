@@ -25,19 +25,28 @@ public class SecurityConfig {
                                 "/",
                                 "/index.html",
                                 "/assets/**",
-                                "/login.html",
+                                "/login",
+
                                 "favicon.ico",
                                 "/config.js"
                         ).permitAll()
                         .requestMatchers(
-                                "api/user/me",
-                                "api/auth/sign-up",
-                                "api/auth/sign-in"
+//                                "api/user/me",
+                                "/api/auth/sign-up",
+                                "/api/auth/sign-in"
                         ).permitAll()
-                        .requestMatchers("/**").authenticated()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui/index.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers("/api/**").authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(form -> form.loginPage("/login"))
+                .formLogin(form -> form.disable())
                 .logout(logout -> logout.logoutSuccessUrl("/auth/sign-out"));
 
         return http.build();

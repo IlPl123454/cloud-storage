@@ -2,7 +2,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/cloudstorage
+    url: jdbc:postgresql://localhost:5432/cloudstorage
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 

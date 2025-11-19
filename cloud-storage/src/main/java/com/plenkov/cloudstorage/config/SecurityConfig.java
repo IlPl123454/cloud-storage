@@ -31,7 +31,7 @@ public class SecurityConfig {
                                 "/config.js"
                         ).permitAll()
                         .requestMatchers(
-//                                "api/user/me",
+                                "api/user/me",
                                 "/api/auth/sign-up",
                                 "/api/auth/sign-in"
                         ).permitAll()

@@ -1,6 +1,7 @@
 package com.plenkov.cloudstorage.controller;
 
 import com.plenkov.cloudstorage.dto.auth.UserDto;
+import com.plenkov.cloudstorage.security.UserDetailsImpl;
 import com.plenkov.cloudstorage.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public UserDto getUser(@AuthenticationPrincipal UserDto userDto) {
-        return userService.getUser(userDto);
+    public UserDto getUser(@AuthenticationPrincipal UserDetailsImpl user) {
+        return userService.getUser(user);
     }
 }

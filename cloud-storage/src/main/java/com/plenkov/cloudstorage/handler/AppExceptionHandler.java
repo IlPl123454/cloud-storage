@@ -55,7 +55,7 @@ public class AppExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto handleException(Exception e) {
-        log.error(e.getMessage());
+        log.error("Unhandled exception: ", e);
         return new ErrorDto("Неизвестная ошибка");
     }
 }

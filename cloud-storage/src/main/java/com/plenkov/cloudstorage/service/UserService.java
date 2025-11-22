@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     public UserDto getUser(@AuthenticationPrincipal UserDetailsImpl user) {
+        //TODO
         if (user == null) {
-            throw new NotAuthorized("Пользователь не авторизован");
+//            throw new NotAuthorized("Пользователь не авторизован");
+            return null;
         }
         return new UserDto(user.getUsername());
     }

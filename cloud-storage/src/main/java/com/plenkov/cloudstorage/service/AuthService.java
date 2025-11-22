@@ -48,7 +48,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return new UserRegisterResponseDto(user.getLogin());
+        return new UserRegisterResponseDto(user.getId(), user.getLogin());
     }
 
     public UserDto authenticate(UserSignInRequestDto dto,

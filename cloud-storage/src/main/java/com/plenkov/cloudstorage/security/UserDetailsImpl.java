@@ -13,6 +13,10 @@ public class UserDetailsImpl implements UserDetails {
 
     private final User user;
 
+    public Long gerUserId() {
+        return user.getId();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

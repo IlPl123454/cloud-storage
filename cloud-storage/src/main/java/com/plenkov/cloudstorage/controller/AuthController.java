@@ -1,10 +1,9 @@
 package com.plenkov.cloudstorage.controller;
 
+import com.plenkov.cloudstorage.dto.auth.UserDto;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterRequestDto;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterResponseDto;
 import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
-import com.plenkov.cloudstorage.dto.auth.UserDto;
-import com.plenkov.cloudstorage.model.User;
 import com.plenkov.cloudstorage.service.AuthService;
 import com.plenkov.cloudstorage.service.MinioService;
 import io.swagger.v3.oas.annotations.tags.Tag;

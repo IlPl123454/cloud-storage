@@ -5,16 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl implements UserDetails, Serializable {
 
-    private final User user;
+    private final Long id;
+    private final String username;
+    private final String password;
 
     public Long gerUserId() {
-        return user.getId();
+        return id;
     }
 
     @Override
@@ -44,11 +47,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getLogin();
+        return username;
     }
 }

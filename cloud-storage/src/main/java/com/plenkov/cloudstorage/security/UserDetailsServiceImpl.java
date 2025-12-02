@@ -1,8 +1,7 @@
-package com.plenkov.cloudstorage.service;
+package com.plenkov.cloudstorage.security;
 
 import com.plenkov.cloudstorage.model.User;
 import com.plenkov.cloudstorage.repository.UserRepository;
-import com.plenkov.cloudstorage.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,6 +23,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        return new UserDetailsImpl(user.get());
+        return new UserDetailsImpl(
+                user.get().getId(),
+                user.get().getLogin(),
+                user.get().getPassword()
+        );
     }
 }

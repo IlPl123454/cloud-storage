@@ -72,10 +72,8 @@ public class AuthService {
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(auth);
-        SecurityContextHolder.setContext(context);
 
         request.getSession(true);
-
         SecurityContextRepository repo = new HttpSessionSecurityContextRepository();
         repo.saveContext(context, request, response);
 

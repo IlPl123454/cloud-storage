@@ -2,6 +2,7 @@ package com.plenkov.cloudstorage.service;
 
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
+import com.plenkov.cloudstorage.exception.MinioStorageException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
@@ -23,7 +24,7 @@ public class MinioService {
     private final MinioClient minioClient;
     private final String bucketName = "user-files";
 
-    public ResourceDto uploadFile(MultipartFile file, String path, Long id) throws Exception {
+    public ResourceDto uploadFile(MultipartFile file, String path, Long id) {
         String userFolderName = getUserFolderName(id);
         String objectPath = userFolderName + "/" + path + "/" + file.getOriginalFilename();
 
@@ -36,14 +37,9 @@ public class MinioService {
                             .object(objectPath)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .build());
-        } catch (IOException | ServerException | InternalException
-                 | InvalidKeyException | InvalidResponseException
-                 | NoSuchAlgorithmException | XmlParserException e) {
-            throw new Exception(e);
-        } catch (InsufficientDataException e) {
-            throw new IllegalArgumentException(e);
-        } catch (ErrorResponseException e) {
-            throw new Exception(e);
+        } catch (IOException | ServerException | InternalException | InvalidKeyException | InvalidResponseException |
+                 NoSuchAlgorithmException | XmlParserException | ErrorResponseException | InsufficientDataException e) {
+            throw new MinioStorageException("Ошибка при попытке загрузить файл", e);
         }
 
         return ResourceDto.builder()
@@ -54,8 +50,7 @@ public class MinioService {
                 .build();
     }
 
-    private void validateFileIsNotPresent(String path) throws ErrorResponseException, ServerException, InsufficientDataException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-
+    private void validateFileIsNotPresent(String path) {
         try {
             minioClient.statObject(
                     StatObjectArgs.builder()
@@ -69,8 +64,11 @@ public class MinioService {
             if (e.errorResponse().code().equals("NoSuchKey")) {
                 return;
             } else {
-                throw e;
+                throw new MinioStorageException("Не удалось прочитать данные о файле", e);
             }
+        } catch (IOException | ServerException | InsufficientDataException | NoSuchAlgorithmException |
+                 InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
+            throw new MinioStorageException("Не удалось прочитать данные о файле", e);
         }
     }
 

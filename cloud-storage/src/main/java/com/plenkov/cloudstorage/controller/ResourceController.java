@@ -21,16 +21,16 @@ public class ResourceController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResourceDto upload(MultipartFile object,
                               @RequestParam String path,
-                              @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
+                              @AuthenticationPrincipal UserDetailsImpl user) {
 
-        ResourceDto resourceDto = minioService.uploadFile(object, path, user.gerUserId());
+        ResourceDto resourceDto = minioService.uploadFile(object, path, user.getUserId());
         log.info("Загрузили файл{}", resourceDto.toString());
         return resourceDto;
     }
 
     @DeleteMapping
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user) throws Exception {
-        minioService.deleteFile(path, user.gerUserId());
+    public void delete(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user) {
+        minioService.deleteFile(path, user.getUserId());
     }
 }

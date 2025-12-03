@@ -1,6 +1,5 @@
 package com.plenkov.cloudstorage.security;
 
-import com.plenkov.cloudstorage.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,7 @@ public class UserDetailsImpl implements UserDetails, Serializable {
     private final String username;
     private final String password;
 
-    public Long gerUserId() {
+    public Long getUserId() {
         return id;
     }
 

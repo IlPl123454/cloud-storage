@@ -25,6 +25,6 @@ public class DirectoryController {
     @GetMapping
     public List<ResourceDto> getDirectoryInfo(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        return minioService.getUserHomeDirectoryInfo(path, user.gerUserId());
+        return minioService.getUserHomeDirectoryInfo(path, user.getUserId());
     }
 }

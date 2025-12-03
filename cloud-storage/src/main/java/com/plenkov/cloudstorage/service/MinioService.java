@@ -1,6 +1,7 @@
 package com.plenkov.cloudstorage.service;
 
 import com.plenkov.cloudstorage.dto.ResourceDto;
+import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
@@ -20,15 +21,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MinioService {
     private final MinioClient minioClient;
+    private final String bucketName = "user-files";
 
     public ResourceDto uploadFile(MultipartFile file, String path, Long id) throws Exception {
         String userFolderName = getUserFolderName(id);
         String objectPath = userFolderName + "/" + path + "/" + file.getOriginalFilename();
 
         try {
+            validateFileIsNotPresent(objectPath);
+
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket("user-files")
+                            .bucket(bucketName)
                             .object(objectPath)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .build());
@@ -42,7 +46,6 @@ public class MinioService {
             throw new Exception(e);
         }
 
-
         return ResourceDto.builder()
                 .name(file.getOriginalFilename())
                 .path(userFolderName + "/" + path)
@@ -51,13 +54,33 @@ public class MinioService {
                 .build();
     }
 
+    private void validateFileIsNotPresent(String path) throws ErrorResponseException, ServerException, InsufficientDataException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+
+        try {
+            minioClient.statObject(
+                    StatObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(path)
+                            .build());
+
+            throw new FileAlreadyExistsException(path + " is already present");
+
+        } catch (ErrorResponseException e) {
+            if (e.errorResponse().code().equals("NoSuchKey")) {
+                return;
+            } else {
+                throw e;
+            }
+        }
+    }
+
     public void deleteFile(String path, Long id) {
         String userFolderName = getUserFolderName(id);
 
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
-                            .bucket("user-files")
+                            .bucket(bucketName)
                             .object(path)
                             .build()
             );
@@ -77,12 +100,13 @@ public class MinioService {
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
             NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
             InternalException {
+        //TODO обработать исключения
 
         List<ResourceDto> resourceDto = new ArrayList<>();
 
         Iterable<Result<Item>> results = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket("user-files")
+                        .bucket(bucketName)
                         .prefix(getUserFolderName(userId) + "/" + path)
                         .recursive(false)
                         .build());

@@ -2,6 +2,7 @@ package com.plenkov.cloudstorage.handler;
 
 import com.plenkov.cloudstorage.dto.ErrorDto;
 import com.plenkov.cloudstorage.exception.AuthException;
+import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
 import com.plenkov.cloudstorage.exception.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +67,12 @@ public class AppExceptionHandler {
                 "Максимальный размер файла - " + maxFileSize);
     }
 
-
+    @ExceptionHandler(FileAlreadyExistsException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ErrorDto handleFileAlreadyExistException(FileAlreadyExistsException e) {
+        log.error(e.getMessage());
+        return new ErrorDto(e.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)

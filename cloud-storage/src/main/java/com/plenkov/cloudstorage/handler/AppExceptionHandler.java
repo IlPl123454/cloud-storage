@@ -3,6 +3,7 @@ package com.plenkov.cloudstorage.handler;
 import com.plenkov.cloudstorage.dto.ErrorDto;
 import com.plenkov.cloudstorage.exception.AuthException;
 import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
+import com.plenkov.cloudstorage.exception.FileNotFoundException;
 import com.plenkov.cloudstorage.exception.UserAlreadyExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,7 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorDto handleMethodArgumentNotValidException(MethodArgumentNotValidException e, BindingResult bindingResult) {
+    public ErrorDto handleMethodArgumentNotValidException(BindingResult bindingResult) {
         String message = bindingResult.getAllErrors().getFirst().getDefaultMessage();
         log.error(message);
         return new ErrorDto(message);
@@ -74,9 +75,17 @@ public class AppExceptionHandler {
         return new ErrorDto(e.getMessage());
     }
 
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public ErrorDto handleFileNotFound(FileNotFoundException e) {
+        log.error(e.getMessage());
+        return new ErrorDto(e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto handleException(Exception e) {
+
         log.error("Unhandled exception: ", e);
         return new ErrorDto("Возникла непредвиденная ошибка");
     }

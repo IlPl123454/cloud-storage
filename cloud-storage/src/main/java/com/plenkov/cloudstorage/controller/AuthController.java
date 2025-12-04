@@ -5,7 +5,6 @@ import com.plenkov.cloudstorage.dto.auth.UserRegisterRequestDto;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterResponseDto;
 import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
 import com.plenkov.cloudstorage.service.AuthService;
-import com.plenkov.cloudstorage.service.MinioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,16 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final MinioService minioService;
 
     @Tag(name = "Название контроллера", description = "Описание контроллера")
     @PostMapping("/sign-up")
     @ResponseStatus(value = HttpStatus.CREATED)
     public UserDto doRegister(@Valid @RequestBody UserRegisterRequestDto userRegisterRequestDto) {
         UserRegisterResponseDto registerResponseDto = authService.register(userRegisterRequestDto);
-
-        minioService.createUserFolder(registerResponseDto.getId());
-
         return new UserDto(registerResponseDto.getUsername());
     }
 

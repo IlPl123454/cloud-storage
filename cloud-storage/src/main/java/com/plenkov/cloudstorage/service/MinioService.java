@@ -10,10 +10,12 @@ import io.minio.errors.*;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -25,6 +27,24 @@ import java.util.List;
 public class MinioService {
     private final MinioClient minioClient;
     private final String bucketName = "user-files";
+    private final String MINIO_STORAGE_EXCEPTION_MESSAGE = "Не удалось прочитать данные о файле";
+
+    public InputStreamResource downloadFile(String path) {
+        try {
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(path)
+                            .build()
+            );
+            return new InputStreamResource(stream);
+
+        } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
+                 InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
+                 XmlParserException e) {
+            throw new MinioStorageException("Ошибка при скачивании файла", e);
+        }
+    }
 
     public ResourceDto getResourceInfo(String path) {
         try {
@@ -98,7 +118,6 @@ public class MinioService {
 
 
     public List<ResourceDto> getUserHomeDirectoryInfo(String path, Long userId) {
-        //TODO обработать исключения
 
         List<ResourceDto> resourceDto = new ArrayList<>();
 
@@ -120,6 +139,7 @@ public class MinioService {
             throw new MinioStorageException("Не удалось получить содержимое папки", e);
         }
     }
+
 
     private String getUserFolderName(Long userId) {
         return "user-" + userId + "-files";

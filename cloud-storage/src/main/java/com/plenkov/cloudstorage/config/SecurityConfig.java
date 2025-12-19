@@ -26,7 +26,8 @@ public class SecurityConfig {
                                         "/index.html",
                                         "/assets/**",
                                         "/login",
-
+                                        "/registration",
+                                        "/files/**",
                                         "favicon.ico",
                                         "/config.js"
                                 ).permitAll()

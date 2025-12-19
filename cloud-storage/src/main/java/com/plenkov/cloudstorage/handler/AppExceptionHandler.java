@@ -1,10 +1,7 @@
 package com.plenkov.cloudstorage.handler;
 
 import com.plenkov.cloudstorage.dto.ErrorDto;
-import com.plenkov.cloudstorage.exception.AuthException;
-import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
-import com.plenkov.cloudstorage.exception.FileNotFoundException;
-import com.plenkov.cloudstorage.exception.UserAlreadyExistException;
+import com.plenkov.cloudstorage.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -82,8 +79,16 @@ public class AppExceptionHandler {
         return new ErrorDto(e.getMessage());
     }
 
+    @ExceptionHandler(MinioStorageException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDto handleMinioStorageException(MinioStorageException e) {
+        log.error("Minio exception", e);
+        return new ErrorDto("Возникла ошибка при работе с Minio");
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+
     public ErrorDto handleException(Exception e) {
 
         log.error("Unhandled exception: ", e);

@@ -9,29 +9,36 @@ import io.minio.messages.Item;
 public final class ResourceDtoMapper {
     public static ResourceDto toResourceDto(Item item) {
         ResourceDto.Type type = item.isDir() ? ResourceDto.Type.DIRECTORY : ResourceDto.Type.FILE;
+        String path = item.objectName();
 
         return ResourceDto.builder()
-                .name(MinioUtil.getName(item))
+                .name(MinioUtil.getName(path, item.isDir()))
                 .size(item.size())
                 .type(type)
-                .path(MinioUtil.getPath(item))
+                .path(MinioUtil.getPath(path, item.isDir()))
                 .build();
     }
 
     public static ResourceDto toResourceDto(StatObjectResponse object) {
 
+        boolean isDir;
         ResourceDto.Type type;
+
         if (object.object().lastIndexOf("/") == object.object().length() - 1) {
             type = ResourceDto.Type.DIRECTORY;
+            isDir = true;
         } else {
             type = ResourceDto.Type.FILE;
+            isDir = false;
         }
 
+        String path = object.object();
+
         return ResourceDto.builder()
-                .name(MinioUtil.getName(object))
+                .name(MinioUtil.getName(path, isDir))
                 .size(object.size())
                 .type(type)
-                .path(MinioUtil.getPath(object))
+                .path(MinioUtil.getPath(path, isDir))
                 .build();
     }
 

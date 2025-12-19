@@ -3,6 +3,7 @@ package com.plenkov.cloudstorage.util;
 import io.minio.GenericResponse;
 import io.minio.messages.Item;
 
+//TODO отрефачить класс, все повторяется, пусть принимает путь и isDir
 public final class MinioUtil {
     public static String getName(Item item) {
         String path = item.objectName();
@@ -54,5 +55,34 @@ public final class MinioUtil {
         int index = path.lastIndexOf('/');
 
         return path.substring(0, index + 1);
+    }
+
+    public static String getName(String path, boolean isDir) {
+        if (isDir) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        int index = path.lastIndexOf('/');
+        String name = path.substring(index + 1);
+
+        return isDir ? name + "/" : name;
+    }
+
+    public static String getPath(String path, boolean isDir) {
+        if (isDir) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        int index = path.indexOf("/");
+        String name = path.substring(index + 1);
+
+        index = name.lastIndexOf("/");
+        if (index == -1) {
+            return "";
+        } else {
+            name = name.substring(0, index);
+        }
+
+        return name + "/";
     }
 }

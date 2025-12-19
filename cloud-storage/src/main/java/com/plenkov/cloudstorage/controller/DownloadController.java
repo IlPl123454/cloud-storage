@@ -9,8 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
-
 @Controller
 @RequestMapping("api/resource/download")
 @RequiredArgsConstructor
@@ -22,6 +20,6 @@ public class DownloadController {
     @ResponseBody
     public InputStreamResource download(@RequestParam String path,
                                         @AuthenticationPrincipal UserDetailsImpl user) {
-        return minioService.downloadFile(path);
+        return minioService.download(path, user.getUserId());
     }
 }

@@ -19,11 +19,11 @@ public interface StorageProvider {
 
     ResourceDto createEmptyFolder(String path);
 
-    List<ResourceDto> searchByNane(String userRootFolder, String query);
+    List<ResourceDto> searchByName(String userRootFolder, String query);
 
     void deleteFolder(String path);
 
-    void deleteFife(String path);
+    void deleteFile(String path);
 
     void copyFolder(String from, String to);
 

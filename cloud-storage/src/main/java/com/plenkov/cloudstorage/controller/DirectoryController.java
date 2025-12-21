@@ -2,7 +2,7 @@ package com.plenkov.cloudstorage.controller;
 
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.security.UserDetailsImpl;
-import com.plenkov.cloudstorage.service.MinioService;
+import com.plenkov.cloudstorage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/api/directory")
 @RequiredArgsConstructor
 public class DirectoryController {
-    private final MinioService minioService;
+    private final StorageService minioService;
 
     @GetMapping
     public List<ResourceDto> getDirectoryInfo(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user) {

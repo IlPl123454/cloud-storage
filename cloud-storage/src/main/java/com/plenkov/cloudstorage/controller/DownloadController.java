@@ -1,7 +1,7 @@
 package com.plenkov.cloudstorage.controller;
 
 import com.plenkov.cloudstorage.security.UserDetailsImpl;
-import com.plenkov.cloudstorage.service.MinioService;
+import com.plenkov.cloudstorage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/resource/download")
 @RequiredArgsConstructor
 public class DownloadController {
-    private final MinioService minioService;
+    private final StorageService minioService;
 
     @GetMapping(produces = "application/octet-stream")
     @ResponseStatus(value = HttpStatus.OK)

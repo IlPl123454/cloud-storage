@@ -2,7 +2,7 @@ package com.plenkov.cloudstorage.controller;
 
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.security.UserDetailsImpl;
-import com.plenkov.cloudstorage.service.MinioService;
+import com.plenkov.cloudstorage.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("api/resource")
 @RequiredArgsConstructor
 public class ResourceController {
-    private final MinioService minioService;
+    private final StorageService minioService;
 
     @GetMapping("/search")
     @ResponseStatus(value = HttpStatus.OK)

@@ -188,7 +188,7 @@ public class MinioStorageProvider implements StorageProvider {
     }
 
     @Override
-    public List<ResourceDto> searchByNane(String userRootFolder, String query) {
+    public List<ResourceDto> searchByName(String userRootFolder, String query) {
         List<ResourceDto> resourceDto = new ArrayList<>();
 
         try {
@@ -228,7 +228,7 @@ public class MinioStorageProvider implements StorageProvider {
                             .build());
 
             for (Result<Item> result : results) {
-                deleteFife(result.get().objectName());
+                deleteFile(result.get().objectName());
             }
         } catch (IllegalArgumentException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
@@ -238,7 +238,7 @@ public class MinioStorageProvider implements StorageProvider {
     }
 
     @Override
-    public void deleteFife(String path) {
+    public void deleteFile(String path) {
         try {
             getResourceInfo(path);
 

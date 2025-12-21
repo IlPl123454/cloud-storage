@@ -34,7 +34,7 @@ public class StorageService {
         }
 
         storageProvider.copyFile(fullSourcePath, fullTargetPath);
-        storageProvider.deleteFife(fullSourcePath);
+        storageProvider.deleteFile(fullSourcePath);
 
         return getResourceInfo(to, id);
     }
@@ -58,7 +58,7 @@ public class StorageService {
 
     public List<ResourceDto> searchByNane(String query, Long userId) {
         String userRoot = getUserFolderName(userId) + "/";
-        return storageProvider.searchByNane(userRoot, query);
+        return storageProvider.searchByName(userRoot, query);
     }
 
     public ResourceDto createEmptyFolder(String path, Long id) {
@@ -102,7 +102,7 @@ public class StorageService {
 
             ResourceDto resourceDto = storageProvider.uploadFile(file, fullPath);
 
-
+            // добавить создание пустой папки
 
             resourceDtos.add(resourceDto);
         }
@@ -116,7 +116,7 @@ public class StorageService {
         if (path.endsWith("/")) {
             storageProvider.deleteFolder(fullPath);
         } else {
-            storageProvider.deleteFife(fullPath);
+            storageProvider.deleteFile(fullPath);
         }
     }
 

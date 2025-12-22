@@ -269,7 +269,7 @@ public class MinioStorageProvider implements StorageProvider {
             for (Result<Item> result : results) {
                 Item item = result.get();
                 String fileFullSourceName = item.objectName();
-                String fileTargetName = to + MinioUtil.getName(item);
+                String fileTargetName = to + MinioUtil.getName(fileFullSourceName, item.isDir());
 
                 copyFile(fileFullSourceName, fileTargetName);
             }

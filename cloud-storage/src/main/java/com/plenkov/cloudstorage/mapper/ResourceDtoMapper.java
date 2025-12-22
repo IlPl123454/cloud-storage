@@ -45,17 +45,20 @@ public final class ResourceDtoMapper {
     public static ResourceDto toResourceDto(ObjectWriteResponse object, Long size) {
 
         ResourceDto.Type type;
+        boolean isDir;
         if (object.object().lastIndexOf("/") == object.object().length() - 1) {
             type = ResourceDto.Type.DIRECTORY;
+            isDir = true;
         } else {
             type = ResourceDto.Type.FILE;
+            isDir = false;
         }
 
         return ResourceDto.builder()
-                .name(MinioUtil.getName(object))
+                .name(MinioUtil.getName(object.object(),isDir))
                 .size(size)
                 .type(type)
-                .path(MinioUtil.getPath(object))
+                .path(MinioUtil.getPath(object.object(),isDir))
                 .build();
     }
 }

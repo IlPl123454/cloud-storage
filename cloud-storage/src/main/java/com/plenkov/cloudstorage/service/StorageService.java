@@ -4,6 +4,7 @@ import com.plenkov.cloudstorage.config.LogMessage;
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
 import com.plenkov.cloudstorage.exception.FileNotFoundException;
+import com.plenkov.cloudstorage.util.MinioUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -90,20 +91,24 @@ public class StorageService {
         String userFolderName = getUserFolderName(id);
 
         for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
             String fullPath;
             if (path.isEmpty()) {
-                fullPath = userFolderName + "/" + file.getOriginalFilename();
+                fullPath = userFolderName + "/" + fileName;
             } else {
-                fullPath = userFolderName + "/" + path + "/" + file.getOriginalFilename();
+                fullPath = userFolderName + "/" + path + "/" + fileName;
             }
 
-            if (isFileAlreadyExist(path + file.getOriginalFilename(), id)) {
+            if (isFileAlreadyExist(path + fileName, id)) {
                 throw new FileAlreadyExistsException(String.format(LogMessage.EXCEPTION_FILE_ALREADY_EXIST, path), fullPath);
             }
 
             ResourceDto resourceDto = storageProvider.uploadFile(file, fullPath);
 
-            //TODO добавить создание пустой папки
+            String emptyFolderFullName = MinioUtil.getPath(fullPath, false);
+            if (!isFileAlreadyExist(emptyFolderFullName, id)) {
+                createEmptyFolder(emptyFolderFullName, id);
+            }
 
             resourceDtos.add(resourceDto);
         }

@@ -1,5 +1,6 @@
 package com.plenkov.cloudstorage.service;
 
+import com.plenkov.cloudstorage.config.LogMessage;
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.exception.FileAlreadyExistsException;
 import com.plenkov.cloudstorage.exception.FileNotFoundException;
@@ -27,10 +28,10 @@ public class StorageService {
         String fullTargetPath = getUserFolderName(id) + "/" + to;
 
         if (!isFileAlreadyExist(from, id)) {
-            throw new FileNotFoundException(from + " not found");
+            throw new FileNotFoundException(String.format(LogMessage.EXCEPTION_FILE_NOT_FOUND, from), fullSourcePath);
         }
         if (isFileAlreadyExist(to, id)) {
-            throw new FileAlreadyExistsException("Ресурс, уже находится в целевой папке");
+            throw new FileAlreadyExistsException(String.format(LogMessage.EXCEPTION_FILE_ALREADY_EXIST, to), fullTargetPath);
         }
 
         storageProvider.copyFile(fullSourcePath, fullTargetPath);
@@ -65,7 +66,7 @@ public class StorageService {
         String fullPath = getUserFolderName(id) + "/" + path;
 
         if (isFileAlreadyExist(path, id)) {
-            throw new FileAlreadyExistsException(path + " уже существует");
+            throw new FileAlreadyExistsException(String.format(LogMessage.EXCEPTION_FILE_ALREADY_EXIST, path), fullPath);
         }
         return storageProvider.createEmptyFolder(fullPath);
     }
@@ -96,13 +97,13 @@ public class StorageService {
                 fullPath = userFolderName + "/" + path + "/" + file.getOriginalFilename();
             }
 
-            if (isFileAlreadyExist(fullPath, id)) {
-                throw new FileAlreadyExistsException(path + " уже существует");
+            if (isFileAlreadyExist(path + file.getOriginalFilename(), id)) {
+                throw new FileAlreadyExistsException(String.format(LogMessage.EXCEPTION_FILE_ALREADY_EXIST, path), fullPath);
             }
 
             ResourceDto resourceDto = storageProvider.uploadFile(file, fullPath);
 
-            // добавить создание пустой папки
+            //TODO добавить создание пустой папки
 
             resourceDtos.add(resourceDto);
         }

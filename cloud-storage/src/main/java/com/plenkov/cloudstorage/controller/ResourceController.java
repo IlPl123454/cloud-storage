@@ -37,9 +37,7 @@ public class ResourceController {
                                     @RequestParam String path,
                                     @AuthenticationPrincipal UserDetailsImpl user) {
 
-        List<ResourceDto> resourceDto = minioService.uploadFile(object, path, user.getUserId());
-        log.info("Загрузили файл{}", resourceDto.toString());
-        return resourceDto;
+        return minioService.uploadFile(object, path, user.getUserId());
     }
 
     @DeleteMapping

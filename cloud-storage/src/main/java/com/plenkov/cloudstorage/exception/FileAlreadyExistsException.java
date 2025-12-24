@@ -1,7 +1,13 @@
 package com.plenkov.cloudstorage.exception;
 
+import lombok.Getter;
+
+@Getter
 public class FileAlreadyExistsException extends RuntimeException {
-    public FileAlreadyExistsException(String message) {
+    private final String path;
+
+    public FileAlreadyExistsException(String message, String path) {
         super(message);
+        this.path = path;
     }
 }

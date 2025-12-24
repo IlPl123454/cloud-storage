@@ -1,7 +1,14 @@
 package com.plenkov.cloudstorage.exception;
 
+import com.plenkov.cloudstorage.config.LogMessage;
+import lombok.Getter;
+
+@Getter
 public class UserAlreadyExistException extends RuntimeException {
-    public UserAlreadyExistException(String name) {
-        super("User with username '" + name + "' already exists");
+    private final String username;
+
+    public UserAlreadyExistException(String username) {
+        super(String.format(LogMessage.EXCEPTION_USER_ALREADY_EXIST, username));
+        this.username = username;
     }
 }

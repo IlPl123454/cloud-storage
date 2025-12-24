@@ -42,12 +42,12 @@ public class MinioBucketInit {
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new MinioStorageException("Ошибка при проверка бакета", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, "");
         }
     }
 
     private void createBucket(String bucketName) {
-        log.info("Creating {} bucket",bucketName);
+        log.info("Creating {} bucket", bucketName);
         try {
             minioClient.makeBucket(
                     MakeBucketArgs.builder()
@@ -57,7 +57,8 @@ public class MinioBucketInit {
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new MinioStorageException("Ошибка при создании бакета", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, "");
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.plenkov.cloudstorage.service;
 
+import com.plenkov.cloudstorage.config.LogMessage;
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.exception.FileNotFoundException;
 import com.plenkov.cloudstorage.exception.MinioStorageException;
@@ -47,13 +48,14 @@ public class MinioStorageProvider implements StorageProvider {
 
         } catch (ErrorResponseException e) {
             if (e.errorResponse().code().equals("NoSuchKey")) {
-                throw new FileNotFoundException(path + " not found");
+                throw new FileNotFoundException(String.format(LogMessage.EXCEPTION_FILE_NOT_FOUND,
+                        MinioUtil.getName(path, false)), path);
             } else {
-                throw new MinioStorageException("Не удалось прочитать данные о файле", e);
+                throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
             }
         } catch (IOException | ServerException | InsufficientDataException | NoSuchAlgorithmException |
                  InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
-            throw new MinioStorageException("Не удалось прочитать данные о файле", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -79,7 +81,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (IllegalArgumentException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
                  ServerException | XmlParserException e) {
-            throw new MinioStorageException("Не удалось получить содержимое папки", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -97,7 +99,7 @@ public class MinioStorageProvider implements StorageProvider {
 
         } catch (IOException | ServerException | InternalException | InvalidKeyException | InvalidResponseException |
                  NoSuchAlgorithmException | XmlParserException | ErrorResponseException | InsufficientDataException e) {
-            throw new MinioStorageException("Ошибка при попытке загрузить файл", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -144,9 +146,9 @@ public class MinioStorageProvider implements StorageProvider {
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
                  ServerException | XmlParserException e) {
             if (e instanceof ErrorResponseException) {
-                throw new MinioStorageException((((ErrorResponseException) e).response().message()), e);
+                throw new MinioStorageException((((ErrorResponseException) e).response().message()), e, path);
             }
-            throw new MinioStorageException("Ошибка при скачивании", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
         return new InputStreamResource(new ByteArrayInputStream(baos.toByteArray()));
     }
@@ -165,7 +167,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new MinioStorageException("Ошибка при скачивании", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -183,7 +185,7 @@ public class MinioStorageProvider implements StorageProvider {
 
         } catch (IOException | ServerException | InternalException | InvalidKeyException | InvalidResponseException |
                  NoSuchAlgorithmException | XmlParserException | ErrorResponseException | InsufficientDataException e) {
-            throw new MinioStorageException("Ошибка при попытке загрузить файл", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -213,7 +215,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (IllegalArgumentException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
                  ServerException | XmlParserException e) {
-            throw new MinioStorageException("Не удалось получить содержимое папки", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, "");
         }
     }
 
@@ -233,7 +235,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (IllegalArgumentException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
                  ServerException | XmlParserException e) {
-            throw new MinioStorageException("Не удалось получить содержимое папки", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -248,11 +250,10 @@ public class MinioStorageProvider implements StorageProvider {
                             .object(path)
                             .build()
             );
-            log.info(path + " is deleted");
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new MinioStorageException("Не удалось удалить файл", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, path);
         }
     }
 
@@ -277,7 +278,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (IllegalArgumentException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | IOException | NoSuchAlgorithmException |
                  ServerException | XmlParserException e) {
-            throw new MinioStorageException("Не удалось получить содержимое папки", e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, from);
         }
     }
 
@@ -300,7 +301,7 @@ public class MinioStorageProvider implements StorageProvider {
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new RuntimeException(e);
+            throw new MinioStorageException(LogMessage.EXCEPTION_MINIO_EXCEPTION, e, from);
         }
     }
 }

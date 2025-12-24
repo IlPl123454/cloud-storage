@@ -1,5 +1,6 @@
 package com.plenkov.cloudstorage.service;
 
+import com.plenkov.cloudstorage.config.LogMessage;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterRequestDto;
 import com.plenkov.cloudstorage.dto.auth.UserRegisterResponseDto;
 import com.plenkov.cloudstorage.dto.auth.UserSignInRequestDto;
@@ -67,7 +68,7 @@ public class AuthService {
             auth = authenticationManager.authenticate(token);
 
         } catch (Exception exception) {
-            throw new AuthException("Authentication failed");
+            throw new AuthException(LogMessage.EXCEPTION_FAILED_AUTHENTICATION);
         }
 
         SecurityContext context = SecurityContextHolder.createEmptyContext();

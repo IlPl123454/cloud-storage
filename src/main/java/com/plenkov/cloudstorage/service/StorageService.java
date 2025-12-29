@@ -45,6 +45,8 @@ public class StorageService {
         String fullSourcePath = getUserFolderName(id) + "/" + from;
         String fullTargetPath = getUserFolderName(id) + "/" + to;
 
+        //TODO проверить перемещение папки, которая уже есть
+
 //        if (!isFileAlreadyExist(from, id)) {
 //            throw new FileNotFoundException(from + " not found");
 //        }

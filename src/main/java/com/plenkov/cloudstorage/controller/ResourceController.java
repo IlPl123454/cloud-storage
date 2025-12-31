@@ -1,5 +1,6 @@
 package com.plenkov.cloudstorage.controller;
 
+import com.plenkov.cloudstorage.controller.api.ResourceApi;
 import com.plenkov.cloudstorage.dto.ResourceDto;
 import com.plenkov.cloudstorage.security.UserDetailsImpl;
 import com.plenkov.cloudstorage.service.StorageService;
@@ -16,21 +17,24 @@ import java.util.List;
 @RestController
 @RequestMapping("api/resource")
 @RequiredArgsConstructor
-public class ResourceController {
+public class ResourceController implements ResourceApi {
     private final StorageService minioService;
 
+    @Override
     @GetMapping("/search")
     @ResponseStatus(value = HttpStatus.OK)
     public List<ResourceDto> search(@RequestParam String query, @AuthenticationPrincipal UserDetailsImpl user) {
         return minioService.searchByNane(query, user.getUserId());
     }
 
+    @Override
     @GetMapping
     @ResponseStatus(value = HttpStatus.OK)
     public ResourceDto getResource(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user) {
         return minioService.getResourceInfo(path, user.getUserId());
     }
 
+    @Override
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public List<ResourceDto> upload(MultipartFile[] object,
@@ -40,12 +44,14 @@ public class ResourceController {
         return minioService.uploadFile(object, path, user.getUserId());
     }
 
+    @Override
     @DeleteMapping
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@RequestParam String path, @AuthenticationPrincipal UserDetailsImpl user) {
         minioService.deleteResource(path, user.getUserId());
     }
 
+    @Override
     @GetMapping("/move")
     @ResponseStatus(value = HttpStatus.OK)
     public ResourceDto move(@RequestParam String from, @RequestParam String to, @AuthenticationPrincipal UserDetailsImpl user) {
